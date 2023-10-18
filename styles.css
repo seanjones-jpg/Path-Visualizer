@@ -1,0 +1,26 @@
+#grid {
+    border-collapse: collapse;
+    border: 2px solid #000; /* Add a border to the grid cells */
+}
+
+#grid td {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ccc; /* Add a border to each cell */
+}
+
+.wall{
+    background-color: black;
+}
+.start{
+    background-color: green;
+}
+.end{
+    background-color: red;
+}
+.visited{
+    background-color: aqua;
+}
+.path{
+    background-color: blue;
+}
