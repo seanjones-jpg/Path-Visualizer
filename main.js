@@ -137,18 +137,22 @@ devButton.addEventListener('click', ()=>{
     const{path, visited} = mazeMap(mapArray, startPoint);
     console.log(path)
 
-    gridData.forEach((row) => {
-        row.forEach((cell) => {
-            // Get the row and column values from the dataset
-            const cellRow = parseInt(cell.dataset.row);
-            const cellCol = parseInt(cell.dataset.col);
+    function highlightCellPath(row, col) {
+        const cell = gridData[row][col];
+        cell.classList.add('path');
+    }
+
+    function highlightPath() {
+        if (path.length > 0) {
+            const [row, col] = path.shift();
+            highlightCellPath(row, col);
+            setTimeout(highlightPath, 50); // Adjust the delay (in milliseconds) as needed
+        }
+    }
+
+    highlightPath();
+
     
-            // Check if the [row, col] pair matches the current cell's position
-            if (path.some(coords => coords[0] === cellRow && coords[1] === cellCol)) {
-                cell.classList.add('path');
-            }
-        });
-    });
     // for(let i = 0; i < visited.length; i++){
     //     for(let j = 0; j < visited[0].length; j++){
             
