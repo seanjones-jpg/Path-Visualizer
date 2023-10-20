@@ -8,9 +8,9 @@ const cellSize = 30;
 //Creates a 2d Array of all cells
 const gridData = []
 
-for(let i = 0; i < numRows; i++){
+for (let i = 0; i < numRows; i++) {
     const row = []
-    for(let j = 0; j < numCols; j++){
+    for (let j = 0; j < numCols; j++) {
         const cell = document.createElement('td')
         cell.dataset.row = i;
         cell.dataset.col = j;
@@ -31,7 +31,7 @@ console.log(gridData)
 // iterates through each cell and appends them to the HTML
 gridData.forEach((row) => {
     const tr = document.createElement('tr');
-    row.forEach((cell) =>{
+    row.forEach((cell) => {
         tr.appendChild(cell);
     });
     grid.appendChild(tr);
@@ -41,17 +41,17 @@ gridData.forEach((row) => {
 const cellTypeDropdown = document.getElementById('cell-type');
 let selectedNodeType = cellTypeDropdown.value
 
-cellTypeDropdown.addEventListener('change', function(){
+cellTypeDropdown.addEventListener('change', function () {
     selectedNodeType = cellTypeDropdown.value;
 })
 
 const startCellSet = new Set();
 const endCellSet = new Set();
 
-gridData.forEach(row =>{
-    row.forEach(cell =>{
-        
-        cell.addEventListener('click', (event)=>{
+gridData.forEach(row => {
+    row.forEach(cell => {
+
+        cell.addEventListener('click', (event) => {
             const target = event.target;
             console.log(target.classList)
 
@@ -62,15 +62,15 @@ gridData.forEach(row =>{
             cell.dataset.isWall = 'false';
             cell.dataset.isStart = 'false';
             cell.dataset.isEnd = 'false';
-    
-            if (selectedNodeType === 'wall'){
+
+            if (selectedNodeType === 'wall') {
 
                 target.classList.toggle('wall');
                 cell.dataset.isWall = 'true';
 
-            }else if(selectedNodeType === 'start'){
+            } else if (selectedNodeType === 'start') {
 
-                if(startCellSet.size > 0){
+                if (startCellSet.size > 0) {
                     const existingStartCell = startCellSet.values().next().value;
                     existingStartCell.classList.remove('start');
                     existingStartCell.dataset.isStart = 'false';
@@ -80,11 +80,11 @@ gridData.forEach(row =>{
                 cell.dataset.isStart = 'true';
                 startCellSet.clear();
                 startCellSet.add(target)
-               
 
-            }else if(selectedNodeType === 'end'){
 
-                if(endCellSet.size > 0){
+            } else if (selectedNodeType === 'end') {
+
+                if (endCellSet.size > 0) {
                     const existingEndCell = endCellSet.values().next().value;
                     existingEndCell.classList.remove('end');
                     existingEndCell.dataset.isEnd = 'false';
@@ -97,110 +97,109 @@ gridData.forEach(row =>{
 
             }
             //console.log(cell.dataset.row, cell.dataset.col, cell.dataset.isWall)
-            
+
         });
     });
 });
 
-function generateMap(gridData){
+function generateMap(gridData) {
     const mapArray = [];
     let startPoint = null
 
-    for(let i = 0; i < numRows; i++){
+    for (let i = 0; i < numRows; i++) {
         const mapArrayRow = []
-        for(let j = 0; j < numCols; j++){
-            if(gridData[i][j].dataset.isWall === 'true'){
+        for (let j = 0; j < numCols; j++) {
+            if (gridData[i][j].dataset.isWall === 'true') {
                 mapArrayRow.push('#')
-            }else if(gridData[i][j].dataset.isStart === 'true'){
+            } else if (gridData[i][j].dataset.isStart === 'true') {
                 mapArrayRow.push('S')
                 startPoint = [i, j]
-            }else if(gridData[i][j].dataset.isEnd === 'true'){
+            } else if (gridData[i][j].dataset.isEnd === 'true') {
                 mapArrayRow.push('E')
-            }else{
+            } else {
                 mapArrayRow.push('_')
             }
         }
         mapArray.push(mapArrayRow)
     }
 
-    return {mapArray, startPoint}
+    return { mapArray, startPoint }
 }
 
 const devButton = document.getElementById('dev-button');
 
 
-devButton.addEventListener('click', ()=>{
-    console.log(startCellSet)
-    const {mapArray, startPoint} = generateMap(gridData)
-    console.log(mapArray)
-    console.log(startPoint)
-    const{path, visitedCells} = mazeMap(mapArray, startPoint);
+devButton.addEventListener('click', () => {
 
-    function highlightCellPath(row, col) {
-        const cell = gridData[row][col];
-        cell.classList.remove('visited');
-        cell.classList.add('path');
-    }
+    const { mapArray, startPoint } = generateMap(gridData)
 
+    if (mazeMap(mapArray, startPoint) === -1) {
+        alert('Maze not solvable')
+    } else {
+        const { path, visitedCells } = mazeMap(mapArray, startPoint);
 
-    function highlightCellVisited(row, col) {
-        const cell = gridData[row][col];
-        cell.classList.add('visited');
-    }
+        function highlightCellPath(row, col) {
+            const cell = gridData[row][col];
+            cell.classList.remove('visited');
+            cell.classList.add('path');
+        }
 
 
-    function highlightVisited() {
-        return new Promise((resolve) => {
-            const visitedCellsCopy = visitedCells.slice();
-            function nextVisited() {   
-                if(visitedCellsCopy.length> 0){
-                    const [row, col] = visitedCellsCopy.shift();
-                    highlightCellVisited(row, col);
-                    setTimeout(nextVisited, 10);
-                }else{
-                    resolve();
+        function highlightCellVisited(row, col) {
+            const cell = gridData[row][col];
+            cell.classList.add('visited');
+        }
+
+
+        function highlightVisited() {
+            return new Promise((resolve) => {
+                const visitedCellsCopy = visitedCells.slice();
+                function nextVisited() {
+                    if (visitedCellsCopy.length > 0) {
+                        const [row, col] = visitedCellsCopy.shift();
+                        highlightCellVisited(row, col);
+                        setTimeout(nextVisited, 10);
+                    } else {
+                        resolve();
+                    }
                 }
-            }
-            nextVisited();
-        });     
+                nextVisited();
+            });
+        }
+
+        function highlightPath() {
+            return new Promise((resolve) => {
+                const pathCopy = path.slice();
+                function nextPath() {
+                    if (pathCopy.length > 0) {
+                        const [row, col] = pathCopy.shift();
+                        highlightCellPath(row, col);
+                        setTimeout(nextPath, 50); // Adjust the delay (in milliseconds) as needed
+                    } else {
+                        resolve();
+                    }
+                }
+                nextPath();
+            });
+        }
+
+        highlightVisited()
+            .then(() => {
+                return highlightPath()
+            });
     }
 
-    function highlightPath() {
-        return new Promise((resolve) =>{
-            const pathCopy = path.slice();
-            function nextPath(){
-                if (pathCopy.length > 0) {
-                    const [row, col] = pathCopy.shift();
-                    highlightCellPath(row, col);
-                    setTimeout(nextPath, 50); // Adjust the delay (in milliseconds) as needed
-                }else{
-                    resolve();
-                } 
-            }
-            nextPath();
-        });
-    }
-
-     highlightVisited()
-        .then(() =>{
-            return highlightPath()
-        });
-     
-
-    
-   
-    
 })
 
 
 
 const resetButton = document.getElementById('reset-search')
-resetButton.addEventListener('click', ()=>{
+resetButton.addEventListener('click', () => {
     gridData.forEach((row) => {
         row.forEach((cell) => {
-                cell.classList.remove('path');
-                cell.classList.remove('visited')
-            
+            cell.classList.remove('path');
+            cell.classList.remove('visited')
+
         });
     });
 });
