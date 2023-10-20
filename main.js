@@ -134,30 +134,61 @@ devButton.addEventListener('click', ()=>{
     const {mapArray, startPoint} = generateMap(gridData)
     console.log(mapArray)
     console.log(startPoint)
-    const{path, visited} = mazeMap(mapArray, startPoint);
-    console.log(path)
+    const{path, visitedCells} = mazeMap(mapArray, startPoint);
 
     function highlightCellPath(row, col) {
         const cell = gridData[row][col];
+        cell.classList.remove('visited');
         cell.classList.add('path');
     }
 
-    function highlightPath() {
-        if (path.length > 0) {
-            const [row, col] = path.shift();
-            highlightCellPath(row, col);
-            setTimeout(highlightPath, 50); // Adjust the delay (in milliseconds) as needed
-        }
+
+    function highlightCellVisited(row, col) {
+        const cell = gridData[row][col];
+        cell.classList.add('visited');
     }
 
-    highlightPath();
+
+    function highlightVisited() {
+        return new Promise((resolve) => {
+            const visitedCellsCopy = visitedCells.slice();
+            function nextVisited() {   
+                if(visitedCellsCopy.length> 0){
+                    const [row, col] = visitedCellsCopy.shift();
+                    highlightCellVisited(row, col);
+                    setTimeout(nextVisited, 10);
+                }else{
+                    resolve();
+                }
+            }
+            nextVisited();
+        });     
+    }
+
+    function highlightPath() {
+        return new Promise((resolve) =>{
+            const pathCopy = path.slice();
+            function nextPath(){
+                if (pathCopy.length > 0) {
+                    const [row, col] = pathCopy.shift();
+                    highlightCellPath(row, col);
+                    setTimeout(nextPath, 50); // Adjust the delay (in milliseconds) as needed
+                }else{
+                    resolve();
+                } 
+            }
+            nextPath();
+        });
+    }
+
+     highlightVisited()
+        .then(() =>{
+            return highlightPath()
+        });
+     
 
     
-    // for(let i = 0; i < visited.length; i++){
-    //     for(let j = 0; j < visited[0].length; j++){
-            
-    //     }
-    // }
+   
     
 })
 
@@ -168,6 +199,7 @@ resetButton.addEventListener('click', ()=>{
     gridData.forEach((row) => {
         row.forEach((cell) => {
                 cell.classList.remove('path');
+                cell.classList.remove('visited')
             
         });
     });

@@ -47,7 +47,7 @@ export function mazeMap(graph, start){5
     let nodesLeftInLayer = 1;
 
     let moveCount = 0;
-
+    let visitedCells = [];
     let visited = [];
 
     for(let i = 0; i < R; i++){
@@ -93,7 +93,7 @@ export function mazeMap(graph, start){5
             path.reverse()
             return {
                 path,
-                visited
+                visitedCells
             }
         }
 
@@ -119,7 +119,8 @@ export function mazeMap(graph, start){5
                 const neighbor = [rr,cc].toString();
                 const parentNodeStr = [row, col].toString()
                 parentMap.set(neighbor, parentNodeStr);
-
+                const node = [rr, cc];
+                visitedCells.push(node);
                 visited[rr][cc] = true;
                 nodesInNextLayer++;
             }

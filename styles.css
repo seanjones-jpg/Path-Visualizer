@@ -1,3 +1,38 @@
+.header {
+    background-color: #333; /* Header background color */
+    color: #fff; /* Header text color */
+    text-align: center;
+    padding: 20px;
+}
+
+/* Dropdown and button container */
+.controls-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* Dropdown styling */
+#cell-type {
+    padding: 8px;
+    border: none;
+    background-color: #fff; /* Dropdown background color */
+    color: #333; /* Dropdown text color */
+    border-radius: 4px;
+}
+
+/* Button styling */
+.button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    background-color: #0074d9; /* Button background color */
+    color: #fff; /* Button text color */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 #grid {
     border-collapse: collapse;
     border: 2px solid #000; /* Add a border to the grid cells */
@@ -7,6 +42,12 @@
     width: 30px;
     height: 30px;
     border: 1px solid #ccc; /* Add a border to each cell */
+}
+
+.grid-selection-container{
+    display: grid;
+    place-items: center;
+    height: 100%;
 }
 
 .wall{
@@ -24,3 +65,4 @@
 .path{
     background-color: blue;
 }
+
