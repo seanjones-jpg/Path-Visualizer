@@ -12,18 +12,25 @@
     </div>
     <div class="controls-container">
         <label for="cell-type">Choose Your Cell Type</label>
-        <select id="cell-type" name="cell-type" title="Select Node Type">
+        <select id="cell-type" class="drop-down" name="cell-type" title="Select Node Type">
             <option value="empty">Empty Space</option>
             <option value="wall">Wall</option>
             <option value="start">Start</option>
             <option value="end">End</option>
         </select>
+        <select id="search-type" class="drop-down" name="search-type" title="Select Search Algorithm">
+            <option value="BFS">Breadth First Search</option>
+            <option value="DFS">Depth First Search</option>
+        </select>
         <button id="dev-button" class="button">Log Grid</button>
         <button id="reset-search" class="button">Reset Search</button>
     </div>
-    <table id="grid">
+    <div class="grid-container">
+        <table id="grid">
 
-    </table>
+        </table>
+    </div>
+
     <script type="module" src="main.js"></script>
 </body>
 </html>

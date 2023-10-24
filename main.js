@@ -1,8 +1,9 @@
 import { mazeMap } from './utils/BFS.js';
+import { navigateMaze } from './utils/DFS.js';
 
 const grid = document.getElementById('grid');
-const numRows = 20;
-const numCols = 40;
+const numRows = 15;
+const numCols = 30;
 const cellSize = 30;
 
 //Creates a 2d Array of all cells
@@ -23,9 +24,6 @@ for (let i = 0; i < numRows; i++) {
     }
     gridData.push(row)
 }
-
-console.log(gridData)
-
 
 
 // iterates through each cell and appends them to the HTML
@@ -96,7 +94,6 @@ gridData.forEach(row => {
                 endCellSet.add(target);
 
             }
-            //console.log(cell.dataset.row, cell.dataset.col, cell.dataset.isWall)
 
         });
     });
@@ -127,16 +124,45 @@ function generateMap(gridData) {
 }
 
 const devButton = document.getElementById('dev-button');
+const searchTypeDropdown = document.getElementById('search-type');
+let selectedAlgorithm = searchTypeDropdown.value;
+let path, visitedCells;
+let mazeSolvable = false; 
+
+searchTypeDropdown.addEventListener('change', function () {
+    selectedAlgorithm = searchTypeDropdown.value;
+})
 
 
 devButton.addEventListener('click', () => {
-
+    console.log(selectedAlgorithm)
     const { mapArray, startPoint } = generateMap(gridData)
 
-    if (mazeMap(mapArray, startPoint) === -1) {
-        alert('Maze not solvable')
-    } else {
-        const { path, visitedCells } = mazeMap(mapArray, startPoint);
+    if (selectedAlgorithm === 'BFS') {
+        const result = mazeMap(mapArray, startPoint);
+        if(result == -1){
+            mazeSolvable = false;
+            alert('Maze not solvable')
+        }else{
+            path = result.path || [];
+            visitedCells = result.visitedCells || [];
+            mazeSolvable = true;
+        }
+
+    } else if(selectedAlgorithm === 'DFS'){
+        console.log(mapArray)
+        const result = navigateMaze(mapArray, startPoint);
+
+        if (result == -1){
+            mazeSolvable = false;
+            alert('Maze not solvable');
+            
+        }else{
+            path = result.path || [];
+            visitedCells = result.visitedCells || [];
+            mazeSolvable = true;
+        }
+    }
 
         function highlightCellPath(row, col) {
             const cell = gridData[row][col];
@@ -150,44 +176,44 @@ devButton.addEventListener('click', () => {
             cell.classList.add('visited');
         }
 
-
-        function highlightVisited() {
-            return new Promise((resolve) => {
-                const visitedCellsCopy = visitedCells.slice();
-                function nextVisited() {
-                    if (visitedCellsCopy.length > 0) {
-                        const [row, col] = visitedCellsCopy.shift();
-                        highlightCellVisited(row, col);
-                        setTimeout(nextVisited, 10);
-                    } else {
-                        resolve();
+        if(mazeSolvable){
+            function highlightVisited() {
+                return new Promise((resolve) => {
+                    const visitedCellsCopy = visitedCells.slice();
+                    function nextVisited() {
+                        if (visitedCellsCopy.length > 0) {
+                            const [row, col] = visitedCellsCopy.shift();
+                            highlightCellVisited(row, col);
+                            setTimeout(nextVisited, 10);
+                        } else {
+                            resolve();
+                        }
                     }
-                }
-                nextVisited();
-            });
-        }
+                    nextVisited();
+                });
+            }
 
-        function highlightPath() {
-            return new Promise((resolve) => {
-                const pathCopy = path.slice();
-                function nextPath() {
-                    if (pathCopy.length > 0) {
-                        const [row, col] = pathCopy.shift();
-                        highlightCellPath(row, col);
-                        setTimeout(nextPath, 50); // Adjust the delay (in milliseconds) as needed
-                    } else {
-                        resolve();
+            function highlightPath() {
+                return new Promise((resolve) => {
+                    const pathCopy = path.slice();
+                    function nextPath() {
+                        if (pathCopy.length > 0) {
+                            const [row, col] = pathCopy.shift();
+                            highlightCellPath(row, col);
+                            setTimeout(nextPath, 50); // Adjust the delay (in milliseconds) as needed
+                        } else {
+                            resolve();
+                        }
                     }
-                }
-                nextPath();
-            });
-        }
+                    nextPath();
+                });
+            }
 
-        highlightVisited()
-            .then(() => {
-                return highlightPath()
-            });
-    }
+            highlightVisited()
+                .then(() => {
+                    return highlightPath()
+                });
+        }
 
 })
 

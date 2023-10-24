@@ -4,22 +4,27 @@
     text-align: center;
     padding: 20px;
 }
-
+*{
+    background-color: #333;
+}
 /* Dropdown and button container */
 .controls-container {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 10px;
+    background-color: #333;
+    color: #fff;
 }
 
 /* Dropdown styling */
-#cell-type {
+.drop-down {
     padding: 8px;
     border: none;
-    background-color: #fff; /* Dropdown background color */
-    color: #333; /* Dropdown text color */
+    background-color: green; /* Dropdown background color */
+    color: #fff; /* Dropdown text color */
     border-radius: 4px;
+    margin-left: 20px;
 }
 
 /* Button styling */
@@ -50,8 +55,15 @@
     height: 100%;
 }
 
+.grid-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 50px;
+}
+
 .wall{
-    background-color: black;
+    background-color: white;
 }
 .start{
     background-color: green;
