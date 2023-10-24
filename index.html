@@ -11,8 +11,8 @@
         <h1>Path Finding Visulizer</h1>
     </div>
     <div class="controls-container">
-        <label for="cell-type">Choose Your Cell Type</label>
-        <select id="cell-type" class="drop-down" name="cell-type" title="Select Node Type">
+        <label for="cell-type" class="dd-space">Choose Your Cell Type</label>
+        <select id="cell-type" class="drop-down dd-space" name="cell-type" title="Select Node Type">
             <option value="empty">Empty Space</option>
             <option value="wall">Wall</option>
             <option value="start">Start</option>
@@ -22,6 +22,7 @@
             <option value="BFS">Breadth First Search</option>
             <option value="DFS">Depth First Search</option>
         </select>
+        <button id="generate-maze" class="button">Generate Random Maze</button>
         <button id="dev-button" class="button">Log Grid</button>
         <button id="reset-search" class="button">Reset Search</button>
     </div>
@@ -32,6 +33,7 @@
     </div>
 
     <script type="module" src="main.js"></script>
+
 </body>
 </html>
 

@@ -1,10 +1,11 @@
 import { mazeMap } from './utils/BFS.js';
 import { navigateMaze } from './utils/DFS.js';
+import { generateMaze } from './utils/generateMaze.js';
 
 const grid = document.getElementById('grid');
-const numRows = 15;
-const numCols = 30;
-const cellSize = 30;
+const numRows = 100;
+const numCols = 100;
+const cellSize = 700/numRows;
 
 //Creates a 2d Array of all cells
 const gridData = []
@@ -125,6 +126,8 @@ function generateMap(gridData) {
 
 const devButton = document.getElementById('dev-button');
 const searchTypeDropdown = document.getElementById('search-type');
+const generateMazeButton = document.getElementById('generate-maze');
+
 let selectedAlgorithm = searchTypeDropdown.value;
 let path, visitedCells;
 let mazeSolvable = false; 
@@ -133,6 +136,37 @@ searchTypeDropdown.addEventListener('change', function () {
     selectedAlgorithm = searchTypeDropdown.value;
 })
 
+generateMazeButton.addEventListener('click', ()=>{
+    
+    gridData.forEach((row) => {
+        row.forEach((cell) => {
+            cell.classList.remove('wall');
+            cell.dataset.isWall = false;
+            cell.classList.remove('visited');
+            cell.classList.remove('path');
+
+        });
+    });
+
+    const generatedMaze = generateMaze(numRows, numCols)
+
+    function setCellToWall(row, col) {
+        const cell = gridData[row][col];
+        cell.dataset.isWall = true;
+        cell.classList.add('wall');
+    }
+
+    const R = generatedMaze.length;
+    const C = generatedMaze[0].length;
+    for(let i = 0; i < R; i++){
+        for(let j = 0; j < C; j ++){
+            if(generatedMaze[i][j] === '#'){
+                setCellToWall(i, j)
+            }
+        }
+    }
+    
+})
 
 devButton.addEventListener('click', () => {
     console.log(selectedAlgorithm)

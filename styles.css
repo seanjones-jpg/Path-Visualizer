@@ -24,7 +24,10 @@
     background-color: green; /* Dropdown background color */
     color: #fff; /* Dropdown text color */
     border-radius: 4px;
-    margin-left: 20px;
+}
+
+.dd-space{
+    margin-right: 20px;
 }
 
 /* Button styling */
@@ -41,6 +44,7 @@
 #grid {
     border-collapse: collapse;
     border: 2px solid #000; /* Add a border to the grid cells */
+        
 }
 
 #grid td {
