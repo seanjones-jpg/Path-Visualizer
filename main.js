@@ -3,38 +3,81 @@ import { navigateMaze } from './utils/DFS.js';
 import { generateMaze } from './utils/generateMaze.js';
 
 const grid = document.getElementById('grid');
-const numRows = 100;
-const numCols = 100;
-const cellSize = 700/numRows;
 
-//Creates a 2d Array of all cells
 const gridData = []
+let size;
 
-for (let i = 0; i < numRows; i++) {
-    const row = []
-    for (let j = 0; j < numCols; j++) {
-        const cell = document.createElement('td')
-        cell.dataset.row = i;
-        cell.dataset.col = j;
-        cell.dataset.isWall = false;
-        cell.dataset.isStart = false;
-        cell.dataset.isEnd = false;
-        cell.style.width = cellSize + 'px';
-        cell.style.height = cellSize + 'px';
-        row.push(cell)
+const gridSizeDropdown = document.getElementById('grid-size');
+let selectedSize = gridSizeDropdown.value;
+let numRows;
+let numCols;
+
+document.addEventListener('DOMContentLoaded', function(){
+    createGrid(10);
+})
+
+gridSizeDropdown.addEventListener('change', function () {
+    selectedSize = gridSizeDropdown.value;
+    switch (selectedSize){
+        case 'small':
+            size = 10;
+            break;
+        case 'medium':
+            size = 50;
+            break;
+        case 'large':
+            size = 100;
+            break;
     }
-    gridData.push(row)
+    clearGrid();
+    createGrid(size);
+})
+
+function clearGrid() {
+    console.log('clearing grid')
+    if(grid) {
+        grid.innerHTML = '';
+        gridData.length = 0;
+    }
 }
 
+function createGrid(size){
+    //Creates a 2d Array of all cells
+    
+    numRows = size;
+    numCols = size;
+    const cellSize = 700/numRows;
 
-// iterates through each cell and appends them to the HTML
-gridData.forEach((row) => {
-    const tr = document.createElement('tr');
-    row.forEach((cell) => {
-        tr.appendChild(cell);
+    for (let i = 0; i < numRows; i++) {
+        const row = []
+        for (let j = 0; j < numCols; j++) {
+            const cell = document.createElement('td')
+            cell.dataset.row = i;
+            cell.dataset.col = j;
+            cell.dataset.isWall = false;
+            cell.dataset.isStart = false;
+            cell.dataset.isEnd = false;
+            cell.style.width = cellSize + 'px';
+            cell.style.height = cellSize + 'px';
+            row.push(cell)
+        }
+        gridData.push(row)
+    }
+
+
+    // iterates through each cell and appends them to the HTML
+    gridData.forEach((row) => {
+        const tr = document.createElement('tr');
+        row.forEach((cell) => {
+            tr.appendChild(cell);
+        });
+        grid.appendChild(tr);
     });
-    grid.appendChild(tr);
-});
+
+    addClickEventListeners();
+}
+
+addClickEventListeners();
 
 //Selecting what cells to place 
 const cellTypeDropdown = document.getElementById('cell-type');
@@ -47,58 +90,60 @@ cellTypeDropdown.addEventListener('change', function () {
 const startCellSet = new Set();
 const endCellSet = new Set();
 
-gridData.forEach(row => {
-    row.forEach(cell => {
+function addClickEventListeners(){
+        gridData.forEach(row => {
+        row.forEach(cell => {
 
-        cell.addEventListener('click', (event) => {
-            const target = event.target;
-            console.log(target.classList)
+            cell.addEventListener('click', (event) => {
+                const target = event.target;
+                console.log(target.classList)
 
-            target.classList.remove('wall');
-            target.classList.remove('start');
-            target.classList.remove('end');
+                target.classList.remove('wall');
+                target.classList.remove('start');
+                target.classList.remove('end');
 
-            cell.dataset.isWall = 'false';
-            cell.dataset.isStart = 'false';
-            cell.dataset.isEnd = 'false';
+                cell.dataset.isWall = 'false';
+                cell.dataset.isStart = 'false';
+                cell.dataset.isEnd = 'false';
 
-            if (selectedNodeType === 'wall') {
+                if (selectedNodeType === 'wall') {
 
-                target.classList.toggle('wall');
-                cell.dataset.isWall = 'true';
+                    target.classList.toggle('wall');
+                    cell.dataset.isWall = 'true';
 
-            } else if (selectedNodeType === 'start') {
+                } else if (selectedNodeType === 'start') {
 
-                if (startCellSet.size > 0) {
-                    const existingStartCell = startCellSet.values().next().value;
-                    existingStartCell.classList.remove('start');
-                    existingStartCell.dataset.isStart = 'false';
+                    if (startCellSet.size > 0) {
+                        const existingStartCell = startCellSet.values().next().value;
+                        existingStartCell.classList.remove('start');
+                        existingStartCell.dataset.isStart = 'false';
+                    }
+
+                    target.classList.toggle('start');
+                    cell.dataset.isStart = 'true';
+                    startCellSet.clear();
+                    startCellSet.add(target)
+
+
+                } else if (selectedNodeType === 'end') {
+
+                    if (endCellSet.size > 0) {
+                        const existingEndCell = endCellSet.values().next().value;
+                        existingEndCell.classList.remove('end');
+                        existingEndCell.dataset.isEnd = 'false';
+                    }
+
+                    target.classList.toggle('end');
+                    cell.dataset.isEnd = 'true';
+                    endCellSet.clear();
+                    endCellSet.add(target);
+
                 }
 
-                target.classList.toggle('start');
-                cell.dataset.isStart = 'true';
-                startCellSet.clear();
-                startCellSet.add(target)
-
-
-            } else if (selectedNodeType === 'end') {
-
-                if (endCellSet.size > 0) {
-                    const existingEndCell = endCellSet.values().next().value;
-                    existingEndCell.classList.remove('end');
-                    existingEndCell.dataset.isEnd = 'false';
-                }
-
-                target.classList.toggle('end');
-                cell.dataset.isEnd = 'true';
-                endCellSet.clear();
-                endCellSet.add(target);
-
-            }
-
+            });
         });
     });
-});
+}
 
 function generateMap(gridData) {
     const mapArray = [];
@@ -169,6 +214,10 @@ generateMazeButton.addEventListener('click', ()=>{
 })
 
 devButton.addEventListener('click', () => {
+    devButton.disabled = true;
+    generateMazeButton.disabled = true;
+    resetButton.disabled = true;
+
     console.log(selectedAlgorithm)
     const { mapArray, startPoint } = generateMap(gridData)
 
@@ -246,8 +295,16 @@ devButton.addEventListener('click', () => {
             highlightVisited()
                 .then(() => {
                     return highlightPath()
+                })
+                .then(() => {
+                    devButton.disabled = false;
+                    generateMazeButton.disabled = false;
+                    resetButton.disabled = false;
                 });
         }
+
+        
+        
 
 })
 

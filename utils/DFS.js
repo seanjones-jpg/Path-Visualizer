@@ -22,17 +22,36 @@ export function navigateMaze(graph, start) {
 
     const R = graph.length;
     const C = graph[0].length;
-    const path = [];
+    const startNode = start.toString();
+    const parentMap = new Map();
+   
+    parentMap.set(startNode, null);
 
     while(stack.length > 0){
         const current = stack.pop();
         const[r, c] = current;
         const pointValue = graph[r][c];
-        path.push(current);
         visitedCells.push(current);
 
 
         if(graph[r][c] === 'E'){
+            const path = [];
+            var node = [r, c].toString();
+            // path.push(node);
+            // node.toString();
+
+            while (parentMap.get(node)){
+
+                const nodeStrArr = node.split(',');
+                const pathNode = [];
+                for(let i = 0; i < nodeStrArr.length; i++){
+                    pathNode.push(parseInt(nodeStrArr[i]))
+                }
+                path.push(pathNode)
+
+                node = parentMap.get(node)
+            }
+            path.reverse()
             return {
                 path,
                 visitedCells
@@ -61,6 +80,9 @@ export function navigateMaze(graph, start) {
                 !visited.has(neighborString)
             ){
                 stack.push(neighbor);
+                
+                const parentNodeStr = [r, c].toString()
+                parentMap.set(neighborString, parentNodeStr);
             }
         }
     }
