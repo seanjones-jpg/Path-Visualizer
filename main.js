@@ -46,7 +46,7 @@ function createGrid(size){
     
     numRows = size;
     numCols = size;
-    const cellSize = 700/numRows;
+    const cellSize = 500/numRows;
 
     for (let i = 0; i < numRows; i++) {
         const row = []
@@ -283,7 +283,7 @@ devButton.addEventListener('click', () => {
                         if (pathCopy.length > 0) {
                             const [row, col] = pathCopy.shift();
                             highlightCellPath(row, col);
-                            setTimeout(nextPath, 50); // Adjust the delay (in milliseconds) as needed
+                            setTimeout(nextPath, 25); // Adjust the delay (in milliseconds) as needed
                         } else {
                             resolve();
                         }
