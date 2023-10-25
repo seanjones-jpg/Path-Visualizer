@@ -2,7 +2,7 @@
     background-color: #333; /* Header background color */
     color: #fff; /* Header text color */
     text-align: center;
-    padding: 20px;
+    padding: 5px;
 }
 *{
     background-color: #333;
@@ -48,6 +48,7 @@
 }
 
 #grid td {
+    box-sizing: border-box;
     width: 30px;
     height: 30px;
     border: 1px solid #ccc; /* Add a border to each cell */

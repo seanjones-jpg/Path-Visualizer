@@ -46,7 +46,7 @@ function createGrid(size){
     
     numRows = size;
     numCols = size;
-    const cellSize = 500/numRows;
+    const cellSize = 450/numRows;
 
     for (let i = 0; i < numRows; i++) {
         const row = []
