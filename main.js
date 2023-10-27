@@ -45,7 +45,7 @@ function createGrid(size){
     //Creates a 2d Array of all cells
     
     numRows = size;
-    numCols = size;
+    numCols = 2 * size;
     const cellSize = 450/numRows;
 
     for (let i = 0; i < numRows; i++) {
