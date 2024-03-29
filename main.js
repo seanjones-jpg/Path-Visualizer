@@ -60,6 +60,16 @@ function createGrid(size){
             cell.style.width = cellSize + 'px';
             cell.style.height = cellSize + 'px';
             row.push(cell)
+
+            if (i === 0 && j === 0) {
+                startCell = cell;
+                cell.dataset.isStart = true;
+                cell.classList.add('start');
+            } else if (i === numRows - 1 && j === numCols - 1) {
+                endCell = cell;
+                cell.dataset.isEnd = true;
+                cell.classList.add('end');
+            }
         }
         gridData.push(row)
     }
