@@ -50,7 +50,6 @@ function createGrid(size){
     const cellSize = Math.max(450/numRows, 10);
 
     for (let i = 0; i < numRows; i++) {
-        const tr = document.createElement('tr');
         const row = [];
         for (let j = 0; j < numCols; j++) {
             const cell = document.createElement('td')
@@ -65,7 +64,7 @@ function createGrid(size){
         }
         gridData.push(row)
     }
-
+    console.log(gridData)
 
     // iterates through each cell and appends them to the HTML
     gridData.forEach((row) => {
@@ -93,59 +92,49 @@ cellTypeDropdown.addEventListener('change', function () {
 const startCellSet = new Set();
 const endCellSet = new Set();
 
-function addClickEventListeners(){
-        gridData.forEach(row => {
+
+function addClickEventListeners() {
+    gridData.forEach(row => {
         row.forEach(cell => {
-
-            cell.addEventListener('click', (event) => {
-                const target = event.target;
-                console.log(target.classList)
-
-                target.classList.remove('wall');
-                target.classList.remove('start');
-                target.classList.remove('end');
-
-                cell.dataset.isWall = 'false';
-                cell.dataset.isStart = 'false';
-                cell.dataset.isEnd = 'false';
-
-                if (selectedNodeType === 'wall') {
-
-                    target.classList.toggle('wall');
-                    cell.dataset.isWall = 'true';
-
-                } else if (selectedNodeType === 'start') {
-
-                    if (startCellSet.size > 0) {
-                        const existingStartCell = startCellSet.values().next().value;
-                        existingStartCell.classList.remove('start');
-                        existingStartCell.dataset.isStart = 'false';
-                    }
-
-                    target.classList.toggle('start');
-                    cell.dataset.isStart = 'true';
-                    startCellSet.clear();
-                    startCellSet.add(target)
-
-
-                } else if (selectedNodeType === 'end') {
-
-                    if (endCellSet.size > 0) {
-                        const existingEndCell = endCellSet.values().next().value;
-                        existingEndCell.classList.remove('end');
-                        existingEndCell.dataset.isEnd = 'false';
-                    }
-
-                    target.classList.toggle('end');
-                    cell.dataset.isEnd = 'true';
-                    endCellSet.clear();
-                    endCellSet.add(target);
-
-                }
-
-            });
+            cell.addEventListener('click', handleCellClick);
         });
     });
+}
+
+function handleCellClick(event) {
+    const cell = event.target;
+    
+    // Remove all classes and reset data attributes
+    cell.classList.remove('wall', 'start', 'end');
+    cell.dataset.isWall = 'false';
+    cell.dataset.isStart = 'false';
+    cell.dataset.isEnd = 'false';
+
+    // Handle different node types
+    switch (selectedNodeType) {
+        case 'wall':
+            cell.classList.add('wall');
+            cell.dataset.isWall = 'true';
+            break;
+        case 'start':
+            updateCellSet(startCellSet, cell, 'start');
+            break;
+        case 'end':
+            updateCellSet(endCellSet, cell, 'end');
+            break;
+    }
+}
+
+function updateCellSet(cellSet, newCell, className) {
+    if (cellSet.size > 0) {
+        const existingCell = cellSet.values().next().value;
+        existingCell.classList.remove(className);
+        existingCell.dataset[`is${className.charAt(0).toUpperCase() + className.slice(1)}`] = 'false';
+    }
+    newCell.classList.add(className);
+    newCell.dataset[`is${className.charAt(0).toUpperCase() + className.slice(1)}`] = 'true';
+    cellSet.clear();
+    cellSet.add(newCell);
 }
 
 function generateMap(gridData) {
@@ -172,7 +161,7 @@ function generateMap(gridData) {
     return { mapArray, startPoint }
 }
 
-const devButton = document.getElementById('dev-button');
+const solveMazeButton = document.getElementById('solve-maze-button');
 const searchTypeDropdown = document.getElementById('search-type');
 const generateMazeButton = document.getElementById('generate-maze');
 
@@ -188,8 +177,10 @@ generateMazeButton.addEventListener('click', ()=>{
     
     gridData.forEach((row) => {
         row.forEach((cell) => {
-            cell.classList.remove('wall');
-            cell.dataset.isWall = false;
+            cell.classList.remove('wall', 'start', 'end', 'visited', 'path');
+            cell.dataset.isWall = 'false';
+            cell.dataset.isStart = 'false';
+            cell.dataset.isEnd = 'false';
             cell.classList.remove('visited');
             cell.classList.remove('path');
 
@@ -213,11 +204,28 @@ generateMazeButton.addEventListener('click', ()=>{
             }
         }
     }
-    
+
+    let startCell = gridData[0][0]
+    startCell.dataset.isStart = true;
+    startCellSet.clear();
+    startCell.classList.add('start');
+    startCellSet.add(startCell);
+
+    let endCell = gridData[R-2][C-2]
+    endCell.dataset.isEnd = true;
+    endCell.classList.add('end');
+    endCellSet.clear();
+    endCellSet.add(endCell);
+    console.log(endCellSet.size);
+
 })
 
-devButton.addEventListener('click', () => {
-    devButton.disabled = true;
+solveMazeButton.addEventListener('click', () => {
+    if(endCellSet.size < 1 || startCellSet.size < 1){
+        alert("Please Select a Start and End Point")
+        return;
+    }
+    solveMazeButton.disabled = true;
     generateMazeButton.disabled = true;
     resetButton.disabled = true;
 
@@ -300,7 +308,7 @@ devButton.addEventListener('click', () => {
                     return highlightPath()
                 })
                 .then(() => {
-                    devButton.disabled = false;
+                    solveMazeButton.disabled = false;
                     generateMazeButton.disabled = false;
                     resetButton.disabled = false;
                 });
