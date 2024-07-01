@@ -43,13 +43,15 @@ function clearGrid() {
 
 function createGrid(size){
     //Creates a 2d Array of all cells
-    
+    clearGrid()
+    console.log("creating grid")
     numRows = size;
     numCols = 2 * size;
-    const cellSize = 450/numRows;
+    const cellSize = Math.max(450/numRows, 10);
 
     for (let i = 0; i < numRows; i++) {
-        const row = []
+        const tr = document.createElement('tr');
+        const row = [];
         for (let j = 0; j < numCols; j++) {
             const cell = document.createElement('td')
             cell.dataset.row = i;
@@ -60,16 +62,6 @@ function createGrid(size){
             cell.style.width = cellSize + 'px';
             cell.style.height = cellSize + 'px';
             row.push(cell)
-
-            if (i === 0 && j === 0) {
-                startCell = cell;
-                cell.dataset.isStart = true;
-                cell.classList.add('start');
-            } else if (i === numRows - 1 && j === numCols - 1) {
-                endCell = cell;
-                cell.dataset.isEnd = true;
-                cell.classList.add('end');
-            }
         }
         gridData.push(row)
     }
@@ -84,6 +76,7 @@ function createGrid(size){
         grid.appendChild(tr);
     });
 
+    
     addClickEventListeners();
 }
 
